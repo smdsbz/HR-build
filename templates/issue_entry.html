@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+	<link type="text/css" rel="stylesheet" href="../static/css/materialize.css"  media="screen,projection"/>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+	<title>HR系统_demo</title>
+	<meta name="theme-color" content="#33691E">
+</head>
+
+<body>
+	<script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+	<script type="text/javascript" src="../static/js/materialize.min.js"></script>
+
+	<main>
+		<div class="navbar-fixed">
+			<nav>
+				<div class="nav-wrapper light-green darken-4">
+					<a href="#" class="brand-logo"><img src="" style="width:1em; height:1em;" alt="something to fill in"/>HR系统_demo</a>
+				</div>
+			</nav>
+		</div>
+
+		<div class="container">
+			<!-- don'no how 2 let <div> auto-fit -->
+			<br><br>
+			<div class="row">
+				<form class="col s12 m8 offset-m2 l8 offset-l2" action="{{ url_for('entryIssue') }}" method="post">
+					<h5 class="center">事务录入</h5>
+					<div class="row">
+						<div class="progress col s6 offset-s3">
+							<div class="indeterminate"></div>
+						</div>
+					</div>
+					<div class="input-field col s12">
+						<input name="id" type="text" class="validate" required>
+						<label for="id">社联编号</label>
+					</div>
+					<div class="input-field col s12">
+						<input name="title" type="text" class="validate" required>
+						<label for="title">标题</label>
+					</div>
+					<div class="input-field col s12">
+						<textarea name="body" class="materialize-textarea" required></textarea>
+						<label for="body">详细信息</label>
+					</div>
+					<button class="btn col s3 waves-effect waves-light right" type="submit">提交<i class="material-icons right">send</i>
+					</button>
+				</form>
+			</div>
+		</div>
+
+
+
+	</main>
+
+	<script>
+	/* prefilling */
+	$(document).ready(function() {
+		Materialize.updateTextFields();
+	});
+	</script>
+</body>
+</html>

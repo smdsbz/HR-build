@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+		<link type="text/css" rel="stylesheet" href="../static/css/materialize.css"  media="screen,projection"/>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+		<title>HR系统_demo</title>
+		<meta name="theme-color" content="#33691E">
+	</head>
+
+	<body>
+		<script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+		<script type="text/javascript" src="../static/js/materialize.min.js"></script>
+
+		<main>
+			<div class="navbar-fixed">
+				<nav>
+				  <div class="nav-wrapper light-green darken-4">
+					<a href="#" class="brand-logo"><img src="" style="width:1em; height:1em;" alt="something to fill in"/>HR系统_demo</a>
+				  </div>
+				</nav>
+			</div>
+
+			<!-- primitive version -->
+			<!--div class="light-green darken-4 z-depth-2">
+				<div class="container">
+					<br>
+					<h3 class="header center-on-small-only white-text">HR系统_demo</h3>
+					<br>
+				</div>
+			</div-->
+
+			<!-- don'no how 2 let <div> auto-fit -->
+			<div class="container">
+				<br><br><br><br>
+				<div class="row">
+					<div class="col s12 m6 offset-m3 l6 offset-l3">
+						<div class="row card-panel z-depth-1">
+							<!--div class="col s12">
+								<ul class="tabs">
+									<li class="tab col s12"><a href="#login" class="black-text">登录</a></li>
+									<li class="tab col s6"><a href="#signin" class="black-text">注册</a></li>
+								</ul>
+							</div-->
+							<div id="login" class="col s12">
+								<h5 class="center">登录HR管理系统</h5>
+								<div class="divider"></div>
+								<form action="{{ url_for('login') }}" method="post">
+									<div class="row">
+										<div class="input-field col s12">
+											<input id="id" name="id" type="text" class="validate">
+											<label for="id">社联编号</label>
+										</div>
+										<div class="input-field col s12">
+											<input id="passwd" name="passwd" type="password" class="validate">
+											<label for="passwd">密码</label>
+										</div>
+									</div>
+									<div class="valign-wrapper">
+										<div class="col s9 red-text left valign">
+											{% for msg in get_flashed_messages() %}
+											{{ msg }}
+											{% endfor %}
+										</div>
+										<button class="btn col s3 waves-effect waves-light right" type="submit">登录
+											<i class="material-icons right">send</i>
+										</button>
+									</div>
+								</form>
+							</div>
+							<!-- currently, no need of sign-in function -->
+							<!--div id="signin" class="col s12">
+								<form action="" method="post">
+									<div class="row">
+										<div class="input-field col s12">
+											<input id="id" name="id" type="text" class="validate">
+											<label for="id">社联编号</label>
+										</div>
+										<div class="input-field col s12">
+											<input id="passwd" name="passwd" type="password" class="validate">
+											<label for="passwd">密码（请确认输入正确）</label>
+										</div>
+										<div class="input-field col s12">
+											<input id="passwd-verify" name="passwd-verify" type="text" class="validate">
+											<label for="passwd-verify">确认密码</label>
+										</div>
+									</div>
+									<div class="valign-wrapper">
+										<div class="col s9 red-text left valign">
+											{% for msg in get_flashed_messages() %}
+											{{ msg }}
+											{% endfor %}
+										</div>
+										<button class="btn col s3 waves-effect waves-light right" type="submit" name="action">完善信息
+											<i class="material-icons right">description</i>
+										</button>
+									</div>
+								</form>
+							</div-->
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="container">
+				<br><br>
+				<h5>Known Issue:</h5>
+				<code>
+					1. 无项目的搜索会导致TypeError，原因未知<br>
+					2. 同名问题尚未找到较好的解决方案（太复杂了懒得做。。）
+				</code>
+			</div>
+
+
+		</main>
+
+		<script>
+		/*$(document).ready(function(){
+			$('ul.tabs').tabs();
+			$('ul.tabs').tabs('select_tab', 'tab_id');
+		});*/
+
+			/* not yet into use *
+			$(document).ready(function(){
+				$('.parallax').parallax();
+			}); */
+			/* not yet understood *
+			$('.button-collapse').sideNav('show');
+			$('.collapsible').collapsible();
+			$('.button-collapse').sideNav('hide');
+			$('.button-collapse').sideNav('destroy'); */
+		</script>
+	</body>
+</html>
