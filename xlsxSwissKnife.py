@@ -7,19 +7,20 @@ from openpyxl import Workbook, load_workbook
 from datetime import datetime
 #import os, shutil
 
-wb = load_workbook('./score-sheets/template.xlsx')
-# ONLY the FIRST sheet could be rwx-ed
-data = wb.get_sheet_by_name(wb.get_sheet_names()[0])
 
 ######## utils ########
 
 def _read_test():
 	# return table header line
+	wb = load_workbook('./score-sheets/template.xlsx')
+	data = wb.get_sheet_by_name(wb.get_sheet_names()[0])
 	return tuple([ content.value for content in data['A2':'M2'][0] ])
 
 def _move_cursor(name='something you have to mess up with'):
 	# return the index asked
 	# IF no match THEN yield index-number for the next empty row
+	wb = load_workbook('./score-sheets/template.xlsx')
+	data = wb.get_sheet_by_name(wb.get_sheet_names()[0])
 	nameCells = data['A'][0:] # 1: test-use; running: 2
 	names = tuple(filter(lambda s: s and s.strip(), [ content.value for content in nameCells ]))  # thx 2 MichealLiao
 	#print(names)
@@ -37,8 +38,8 @@ def newFile(title="测试测试", depart="其他", *, date=str(datetime.now())):
 	ws['B1'], ws['F1'], ws['J1'] = title, depart, date
 	wb.save(filename)
 
-def write(name):
-	pass
+def write(dst, name, score-list):
+	wb = load_workbook(dst)
 
 ######## test-use ########
 
@@ -49,5 +50,3 @@ if __name__ == '__main__':
 	print("姓名\项目 is at", _move_cursor(name="姓名\\项目"))
 	# expecting result in console ==> 3
 	print("if no match:", _move_cursor())
-
-	newFile()
