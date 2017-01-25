@@ -1,6 +1,6 @@
 #!/usr/bin/python3
-from flask import Flask, render_template, url_for, redirect, request, session
-from flask import make_response, flash
+from flask import Flask, render_template, url_for
+from flask import redirect, request, session, make_response, flash
 import sqlite3, os
 
 app = Flask(__name__)
@@ -33,7 +33,6 @@ def getAdmin(column, conditon, require):
 	database.close()
 	return data
 
-
 def verify(id, passwd):
 	database = sqlite3.connect(os.path.join(app.root_path, 'data.db'))
 	cursor = database.execute("select passwd from admin where id = '%s'" % id)
@@ -48,11 +47,9 @@ def verify(id, passwd):
 
 def updatePerson(id):
 	database = sqlite3.connect(os.path.join(app.root_path, 'data.db'))
-	# EXTREAMLY-ugly line: write to database
 	database.execute("update test set name = '%s', gender = '%s', qq = '%s', tel = '%s', wchat = '%s', emg = '%s', school = '%s', class = '%s', apart = '%s', depart = '%s', grp = '%s', occup = '%s', dateofjoin = '%s' where id = '%s'" % (request.form['name'], request.form['gender'], request.form['qq'], request.form['tel'], request.form['wchat'], request.form['emg'], request.form['school'], request.form['class'], request.form['apart'], request.form['depart'], request.form['group'], request.form['occup'], request.form['dateofjoin'], id))
 	database.commit()
 	database.close()
-	# EXTREAMLY-ugly lines end here
 
 def updateIssue(idx):
 	database = sqlite3.connect(os.path.join(app.root_path, 'data.db'))
@@ -61,7 +58,7 @@ def updateIssue(idx):
 	database.close()
 
 def grepPerson(column, require):
-	print('grepPerson(%s,%s) called' % (column,require))
+	#print('grepPerson(%s,%s) called' % (column,require))
 	database = sqlite3.connect(os.path.join(app.root_path, 'data.db'))
 	cursor = database.execute("select * from test where %s GLOB '*%s*'" % (column, require))
 	data = cursor.fetchall()
@@ -79,24 +76,20 @@ def grepIssue(column, require):
 
 def addPerson():
 	database = sqlite3.connect(os.path.join(app.root_path, 'data.db'))
-	# EXTREAMLY-ugly line: write to database
-	print("before execute()")
 	try:
-		print(request.form['emg'])
 		database.execute("insert into test (id,name,gender,qq,tel,wchat,emg,school,class,apart,depart,grp,occup,dateofjoin) values ('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')" % (request.form['id'], request.form['name'], request.form['gender'], request.form['qq'], request.form['tel'], request.form['wchat'], request.form['emg'], request.form['school'], request.form['class'], request.form['apart'], request.form['depart'], request.form['group'], request.form['occup'], request.form['dateofjoin']))
 	except:
 		# issue: execute() fail when NULL exist in request.form
-		print("addPerson() failed due to invalid request.form element!")
+		print("addPerson() failed!")
 	database.commit()
 	database.close()
-	# EXTREAMLY-ugly lines end here
 
 def addIssue():
 	database = sqlite3.connect(os.path.join(app.root_path,'data.db'))
 	try:
 		database.execute("insert into issue (id,title,body) values ('%s','%s','%s')" % (request.form['id'],request.form['title'],request.form['body']))
 	except:
-		print((request.form['id'],request.form['title'],request.form['body']))
+		print((request.form['id'], request.form['title'], request.form['body']))
 	database.commit()
 	database.close()
 
@@ -189,7 +182,7 @@ def entryPerson():
 @app.route('/entry_issue/', methods=['GET', 'POST'])
 def entryIssue():
 	try:
-		print(session['id'])
+		session['id']
 		if request.method == 'POST':
 			addIssue()
 			print("addIssue() called")
