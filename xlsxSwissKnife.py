@@ -31,15 +31,28 @@ def _move_cursor(name='something you have to mess up with'):
 
 def newFile(title="测试测试", depart="其他", *, date=str(datetime.now())):
 	# "./score-sheets/测试测试 - 2017-01-25 xx.xxxxxxx.xlsx"
-	filename = './score-sheets/' + title + ' - ' + date + '.xlsx'
-	wb = load_workbook('./score-sheets/template.xlsx')
-	ws = wb.get_sheet_by_name(wb.get_sheet_names()[0])
-	ws.title = title
-	ws['B1'], ws['F1'], ws['J1'] = title, depart, date
-	wb.save(filename)
+	try:
+		filename = './score-sheets/' + title + ' - ' + date + '.xlsx'
+		wb = load_workbook('./score-sheets/template.xlsx')
+		ws = wb.get_sheet_by_name(wb.get_sheet_names()[0])
+		ws.title = title
+		ws['B1'], ws['F1'], ws['J1'] = title, depart, date
+		wb.save(filename)
+		return 1
+	except:
+		return 0
 
-def write(dst, name, score-list):
-	wb = load_workbook(dst)
+def write(src, data):
+	try:
+		wb = load_workbook(src)
+		ws = wb.get_sheet_by_name(wb.get_sheet_names()[0])
+		cur = str(_move_cursor(data[0]))
+		dst = ws['A'+cur:'K'+cur][0]
+		map(lambda x, y: x.value = y, [ x, y for x in dst for y in data ])
+		wb.save(src)
+		return 1
+	except:
+		return 0
 
 ######## test-use ########
 
