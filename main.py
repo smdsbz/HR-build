@@ -104,6 +104,7 @@ def addIssue():
 
 @app.route('/')
 def index():
+	# a useless port
 	return redirect(url_for('login'))
 
 @app.route('/login/', methods=['GET', 'POST'])
@@ -117,10 +118,12 @@ def login():
 			if verify(session['id'], session['passwd']):
 				return redirect(url_for('personal'))
 			else:
-				print("no TypeError")
+				# only one is None
+				print("not TypeError")
 				flash("用户名或密码错误！")
 				return render_template('login.html')
 		except TypeError:
+			# both are None
 			print("TypeError")
 			flash("用户名或密码错误！")
 			return render_template('login.html')
@@ -128,17 +131,9 @@ def login():
 @app.route('/personal/')
 def personal():
 	try:
-		if session['id'] != '':
-			database = getAdmin('*','id',session['id'])
-			if database != []:
-				return render_template('personal_base.html', database = database)
-			else:
-				flash("请登录！")
-				return redirect(url_for('login'))
-		else:
-			session.pop['id', None]
-			#print("session-id = ''")
-			return redirect(url_for('login'))
+		session['id']
+		database = getAdmin('id','id',session['id'])
+		return render_template('personal_base.html', database = database)
 	except KeyError:
 		print("TypeError")
 		flash("请登录")
@@ -152,6 +147,7 @@ def logout():
 
 @app.route('/update/<id>', methods=['GET', 'POST'])
 def update(id):
+	# update for personale info
 	try:
 		session['id']
 		if request.method == 'GET':
@@ -179,7 +175,7 @@ def search_person():
 @app.route('/entry_person/', methods=['GET', 'POST'])
 def entryPerson():
 	try:
-		print(session['id'])
+		session['id']
 		if request.method == 'POST':
 			addPerson()
 			print("addPerson() called")
@@ -229,6 +225,7 @@ def search_issue():
 
 @app.route('/update_issue/<idx>', methods=['GET', 'POST'])
 def alter(idx):
+	# alter for issue
 	try:
 		session['id']
 		if request.method == 'GET':

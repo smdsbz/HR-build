@@ -104,12 +104,14 @@
 
 			<div class="container">
 				<br><br>
-				<h5>Known Issue:</h5>
+				<h5>## Known Issue:</h5>
 				<code>
-					1. 无项目的搜索会导致TypeError，原因未知<br>
-					<span class="grey-text">1? 可能是try会执行一遍？？写完整体大致后试试try-except-else？？</span><br>
-					2. 同名问题尚未找到较好的解决方案（太复杂了懒得做。。）<br>
-					3. MaterializeCSS中的label会遮挡input的选中域（在输入分数页面由于输入域占位不需要太大，情况尤为明显。。）<br>
+					- 无项目的搜索会导致TypeError，原因未知（暂且用required解决）<br>
+					<span class="grey-text">? 可能是try会执行一遍？？写完整体大致后试试try-except-else？？</span><br>
+					- 一定情景下falsh()中会存有两次 <span class="red-text">请登录</span> <br>
+					- 同名问题尚未找到较好的解决方案（太复杂了懒得做。。）<br>
+					- search_issue页面下默认的alter()（即 <b class="light-green-text text-darken-4">内容</b> ）会导向不存在的页面<br>
+					- MaterializeCSS中的label会遮挡input的选中域（在输入分数页面由于输入域占位不需要太大，情况尤为明显。。）<br>
 				</code>
 			</div>
 
