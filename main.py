@@ -1,4 +1,8 @@
 #!/usr/bin/python3
+# -*- coding: utf-8 -*-
+
+'   HR System build  ---- by smdsbz   '
+
 from flask import Flask, render_template, url_for
 from flask import redirect, request, session, make_response, flash
 import sqlite3, os
