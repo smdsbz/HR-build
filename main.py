@@ -125,14 +125,18 @@ def login():
 			flash("用户名或密码错误！")
 			return render_template('login.html')
 
-@app.route('/personal/')
+@app.route('/personal/', methods=['GET', 'POST'])
 def personal():
 	try:
 		session['id']
-		database = getAdmin('id','id',session['id'])
-		return render_template('personal_base.html', database = database)
+		if request.method == 'GET':
+			database = getAdmin('id','id',session['id'])
+			return render_template('personal_base.html', database = database)
+		elif request.method == 'POST':
+			filename = request.form['title'] + ' - ' + request.form['time'] + '.xlsx'
+
+			#return redirect()
 	except KeyError:
-		print("TypeError")
 		flash("请登录")
 		return redirect(url_for('login'))
 
@@ -215,7 +219,7 @@ def search_issue():
 		elif request.method == 'GET':
 			return render_template('search_issue.html', name="姓名", result=[("#!","编号","标题","内容"),])
 	except IndexError:
-			return render_template('search_issue.html', name="姓名", result=[("编号","标题","内容"),])
+		return render_template('search_issue.html', name="姓名", result=[("编号","标题","内容"),])
 	except KeyError:
 		flash("请登录!")
 		return redirect(url_for('login'))
@@ -234,6 +238,7 @@ def alter(idx):
 	except KeyError:
 		flash("请登录！")
 		return redirect(url_for('login'))
+
 
 
 ######## main ########
