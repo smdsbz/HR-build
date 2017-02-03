@@ -68,6 +68,9 @@
 					</li>
 				</ul>
 			</div>
+			{% for msg in get_flashed_messages() %}
+				{{ msg }}
+			{% endfor %}
 		</div>
 
 		<div id="score" class="modal modal-fixed-footer">
@@ -100,14 +103,15 @@
 							<label for="title">标题</label>
 						</div>
 						<div class="input-field col s6 right">
-							<input name="time" type="date" class="datepicker" required>
-							<label for="time">考评时间</label>
+							<input name="date" type="date" class="datepicker" required>
+							<label for="date">考评时间</label>
 						</div>
 					</div>
+					<button type="submit" class="btn col s4 waves-effect waves-light right">创建表格<i class="material-icons right">open_in_new</i></button>
 				</form>
 			</div>
 			<div class="modal-footer">
-				<a class="modal-action waves-effect waves-dark btn-flat light-green-text text-darken-4" type="submit">开始评分<i class="material-icons right">open_in_new</i></a>
+				<!--a class="modal-action waves-effect waves-dark btn-flat light-green-text text-darken-4" type="submit">开始评分<i class="material-icons right">open_in_new</i></a-->
 				<a href="#!" class="modal-action modal-close waves-effect waves-dark btn-flat ">取消</a>
 			</div>
 		</div>

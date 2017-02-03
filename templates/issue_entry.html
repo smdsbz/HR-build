@@ -31,18 +31,18 @@
 						<div class="progress col s6 offset-s3">
 							<div class="indeterminate"></div>
 						</div>
-					</div>
-					<div class="input-field col s12">
-						<input name="id" type="text" class="validate" required>
-						<label for="id">社联编号</label>
-					</div>
-					<div class="input-field col s12">
-						<input name="title" type="text" class="validate" required>
-						<label for="title">标题</label>
-					</div>
-					<div class="input-field col s12">
-						<textarea name="body" class="materialize-textarea" required></textarea>
-						<label for="body">详细信息</label>
+						<div class="input-field col s12">
+							<input name="id" type="text" class="validate" required>
+							<label for="id">社联编号</label>
+						</div>
+						<div class="input-field col s12">
+							<input name="title" type="text" class="validate" required>
+							<label for="title">标题</label>
+						</div>
+						<div class="input-field col s12">
+							<textarea name="body" class="materialize-textarea" required></textarea>
+							<label for="body">详细信息</label>
+						</div>
 					</div>
 					<div class="row valign-wrapper">
 						<div class="col s12 m8 offset-m2 l8 offset-l2">
@@ -51,7 +51,7 @@
 								{{ msg }}
 								{% endfor %}
 							</div>
-							<button class="btn col s3 waves-effect waves-light right" type="submit">提交<i class="material-icons right">send</i>
+							<button class="btn col s3 waves-effect waves-light right valign" type="submit">提交<i class="material-icons right">send</i>
 							</button>
 						</div>
 					</div>
@@ -64,7 +64,6 @@
 	</main>
 
 	<script>
-	/* prefilling */
 	$(document).ready(function() {
 		Materialize.updateTextFields();
 	});

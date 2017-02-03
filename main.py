@@ -1,104 +1,107 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
-'   HR System build  ---- by smdsbz   '
+'''   HR System build   '''
 
 from flask import Flask, render_template, url_for
 from flask import redirect, request, session, make_response, flash
-import sqlite3, os
+from functools import wraps
+import sqlite3, os, xlsxSwissKnife
+
+######## initializaton ########
 
 app = Flask(__name__)
 app.secret_key = 'DogLeeNation(2B||!2B)-->|'
 
+######## global configuration ########
+
+FOLDER = os.path.join(os.curdir, 'score-sheets')  # xlsx location
+DATABASE = os.path.join(app.root_path, 'data.db')  # db loaction
+
 ######## functions ########
 
 def getAll():
-	database = sqlite3.connect(os.path.join(app.root_path, 'data.db'))
-	cursor = database.execute('select * from test')
-	data = cursor.fetchall()
-	database.close()
-	return data
+	with sqlite3.connect(DATABASE) as database:
+		cursor = database.execute('select * from test')
+		data = cursor.fetchall()
+		return data
 
 def getConditonal(column, conditon, require):
-	#print('getConditional(%s,%s,%s) called' % (column,conditon,require))
-	database = sqlite3.connect(os.path.join(app.root_path, 'data.db'))
-	cursor = database.execute("select %s from test where %s = '%s'" % (column, conditon, require))
-	data = cursor.fetchall()
-	#print(data)
-	database.close()
-	return data
+	with sqlite3.connect(DATABASE) as database:
+		cursor = database.execute("select %s from test where %s = '%s'" % (column, conditon, require))
+		data = cursor.fetchall()
+		return data
 
 def getAdmin(column, conditon, require):
-	#print('getConditional(%s,%s,%s) called' % (column,conditon,require))
-	database = sqlite3.connect(os.path.join(app.root_path, 'data.db'))
-	cursor = database.execute("select %s from admin where %s = '%s'" % (column, conditon, require))
-	data = cursor.fetchall()
-	#print(data)
-	database.close()
-	return data
+	with sqlite3.connect(DATABASE) as database:
+		cursor = database.execute("select %s from admin where %s = '%s'" % (column, conditon, require))
+		data = cursor.fetchall()
+		return data
 
 def verify(id, passwd):
-	database = sqlite3.connect(os.path.join(app.root_path, 'data.db'))
-	cursor = database.execute("select passwd from admin where id = '%s'" % id)
-	correct = cursor.fetchone()
-	database.close()
-	#print(correct[0])
-	if passwd == correct[0]:
-		return 1
-	else:
-		session.pop('id', None)
-		return 0
+	with sqlite3.connect(DATABASE) as database:
+		cursor = database.execute("select passwd from admin where id = '%s'" % id)
+		correct = cursor.fetchone()
+		if correct==None:  # wrong id
+			flash("用户名或密码错误！")
+			return 0
+		else:  # correct
+			if passwd==correct[0]:
+				return 1
+			else:  # wrong passwd
+				flash("用户名或密码错误！")
+				return 0
+
+def login_verify(to_be_decorated):
+	'''  check-in decorator  '''
+	@wraps(to_be_decorated)
+	def decorated(*args, **kwargs):
+		if 'id' not in session:
+			flash("请登录！")
+			return redirect(url_for('login'))
+		return to_be_decorated(*args, **kwargs)
+	return decorated
 
 def updatePerson(id):
-	database = sqlite3.connect(os.path.join(app.root_path, 'data.db'))
-	database.execute("update test set name = '%s', gender = '%s', qq = '%s', tel = '%s', wchat = '%s', emg = '%s', school = '%s', class = '%s', apart = '%s', depart = '%s', grp = '%s', occup = '%s', dateofjoin = '%s' where id = '%s'" % (request.form['name'], request.form['gender'], request.form['qq'], request.form['tel'], request.form['wchat'], request.form['emg'], request.form['school'], request.form['class'], request.form['apart'], request.form['depart'], request.form['group'], request.form['occup'], request.form['dateofjoin'], id))
-	database.commit()
-	database.close()
+	with sqlite3.connect(DATABASE) as database:
+		database.execute("update test set name = '%s', gender = '%s', qq = '%s', tel = '%s', wchat = '%s', emg = '%s', school = '%s', class = '%s', apart = '%s', depart = '%s', grp = '%s', occup = '%s', dateofjoin = '%s' where id = '%s'" % (request.form['name'], request.form['gender'], request.form['qq'], request.form['tel'], request.form['wchat'], request.form['emg'], request.form['school'], request.form['class'], request.form['apart'], request.form['depart'], request.form['group'], request.form['occup'], request.form['dateofjoin'], id))
+		database.commit()
 
 def updateIssue(idx):
-	database = sqlite3.connect(os.path.join(app.root_path, 'data.db'))
-	database.execute("update issue set title = '%s', body = '%s' where idx = '%s'" % (request.form['title'], request.form['body'], idx))
-	database.commit()
-	database.close()
+	with sqlite3.connect(DATABASE) as database:
+		database.execute("update issue set title = '%s', body = '%s' where idx = '%s'" % (request.form['title'], request.form['body'], idx))
+		database.commit()
 
 def grepPerson(column, require):
-	#print('grepPerson(%s,%s) called' % (column,require))
-	database = sqlite3.connect(os.path.join(app.root_path, 'data.db'))
-	cursor = database.execute("select * from test where %s GLOB '*%s*'" % (column, require))
-	data = cursor.fetchall()
-	database.close()
-	print(data)
-	return data
+	with sqlite3.connect(DATABASE) as database:
+		cursor = database.execute("select * from test where %s GLOB '*%s*'" % (column, require))
+		data = cursor.fetchall()
+		return data
 
 def grepIssue(column, require):
-	database = sqlite3.connect(os.path.join(app.root_path, 'data.db'))
-	cursor = database.execute("select * from issue where %s = '%s'" % (column, require))
-	data = cursor.fetchall()
-	database.close()
-	print(data)
-	return data
+	with sqlite3.connect(DATABASE) as database:
+		if column == 'idx':
+			cursor = database.execute("select * from issue where idx = %s" % require)
+			return cursor.fetchall()
+		else:
+			if column == 'name':
+				cursor = database.execute("select id from test where name = '%s'" % require)
+				id = cursor.fetchone()[0]
+			elif column == 'id':
+				id = require
+			cursor = database.execute("select * from issue where id = '%s'" % id)
+			data = cursor.fetchall()
+			return data
 
 def addPerson():
-	database = sqlite3.connect(os.path.join(app.root_path, 'data.db'))
-	try:
+	with sqlite3.connect(DATABASE) as database:
 		database.execute("insert into test (id,name,gender,qq,tel,wchat,emg,school,class,apart,depart,grp,occup,dateofjoin) values ('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')" % (request.form['id'], request.form['name'], request.form['gender'], request.form['qq'], request.form['tel'], request.form['wchat'], request.form['emg'], request.form['school'], request.form['class'], request.form['apart'], request.form['depart'], request.form['group'], request.form['occup'], request.form['dateofjoin']))
-	except:
-		# issue: execute() fail when NULL exist in request.form
-		# solution: <input> .required
-		flash('Ooops!')  # dunno if this will show
-		print('addPerson() failed!')
-	database.commit()
-	database.close()
+		database.commit()
 
 def addIssue():
-	database = sqlite3.connect(os.path.join(app.root_path,'data.db'))
-	try:
+	with sqlite3.connect(DATABASE) as database:
 		database.execute("insert into issue (id,title,body) values ('%s','%s','%s')" % (request.form['id'],request.form['title'],request.form['body']))
-	except:
-		flash('Ooops!')
-		print((request.form['id'], request.form['title'], request.form['body']))
-	database.commit()
-	database.close()
+		database.commit()
 
 ######## route ########
 
@@ -114,144 +117,104 @@ def login():
 	elif request.method == 'POST':
 		session['id'] = request.form['id']
 		session['passwd'] = request.form['passwd']
-		try:
-			if verify(session['id'], session['passwd']):
-				return redirect(url_for('personal'))
-			else:
-				# only one is None
-				print("not TypeError")
-				flash("用户名或密码错误！")
-				return render_template('login.html')
-		except TypeError:
-			# both are None
-			print("TypeError")
-			flash("用户名或密码错误！")
-			return render_template('login.html')
+		if verify(session['id'], session['passwd']):
+			return redirect(url_for('personal'))
+		return redirect(url_for('logout'))
 
 @app.route('/personal/', methods=['GET', 'POST'])
+@login_verify
 def personal():
-	try:
-		session['id']
-	except KeyError:
-		flash("请登录")
-		return redirect(url_for('login'))
-	else:
-		if request.method == 'GET':
-			database = getAdmin('id','id',session['id'])
-			return render_template('personal_base.html', database = database)
-		elif request.method == 'POST':
-			filename = request.form['title'] + ' - ' + request.form['time'] + '.xlsx'
-
-			#return redirect()
+	if request.method == 'GET':
+		database = getAdmin('id','id',session['id'])
+		return render_template('personal_base.html', database = database)
+	elif request.method == 'POST':
+		filename = request.form['title'] + ' - ' + request.form['date'] + '.xlsx'
+		session['filename'] = filename
+		if xlsxSwissKnife.newFile(request.form['title'], request.form['depart'], date=request.form['date']):
+			return redirect(url_for('score'))
+		else:
+			flash("创建表格失败！")
+			return redirect(url_for('personal'))
 
 @app.route('/logout/')
 def logout():
 	if 'id' in session:
 		session.pop('id', None)
+		# the following lines are wierd
+		session.pop('passwd', None)
+		session.pop('filename', None)
 	return redirect(url_for('index'))
 
 @app.route('/update/<id>', methods=['GET', 'POST'])
+@login_verify
 def update(id):
 	'''  update for personale info  '''
-	try:
-		session['id']
-
-	except KeyError:
-		flash("请登录！")
-		return redirect(url_for('login'))
-	else:
-		if request.method == 'GET':
-			print(id)
-			return render_template('info_update.html', database=getConditonal('*','id',id),id=id)
-		elif request.method == 'POST':
-			updatePerson(id)
-			return redirect(url_for('personal'))
+	if request.method == 'GET':
+		print(id)
+		return render_template('info_update.html', database=getConditonal('*','id',id),id=id)
+	elif request.method == 'POST':
+		updatePerson(id)
+		return redirect(url_for('personal'))
 
 @app.route('/search_person/', methods=['GET', 'POST'])
+@login_verify
 def search_person():
-	try:
-		session['id']
-	except KeyError:
-		flash("请登录!")
-		return redirect(url_for('login'))
-	else:
-		if request.method == 'POST':
-			return render_template('search_person.html', result=grepPerson(request.form['direction'],request.form['content']))
-		elif request.method == 'GET':
-			return render_template('search_person.html', result=grepPerson('id','苟'))
+	if request.method == 'POST':
+		return render_template('search_person.html', result=grepPerson(request.form['direction'],request.form['content']))
+	elif request.method == 'GET':
+		return render_template('search_person.html', result=grepPerson('id','苟'))
 
 @app.route('/entry_person/', methods=['GET', 'POST'])
+@login_verify
 def entryPerson():
-	try:
-		session['id']
-	except KeyError:
-		flash("请登录！")
-		return redirect(url_for('login'))
-	else:
-		if request.method == 'POST':
-			addPerson()
-			print("addPerson() called")
-			return redirect(url_for('personal'))
-		elif request.method == 'GET':
-			return render_template('info_entry.html')
+	if request.method == 'POST':
+		addPerson()
+		print("addPerson() called")
+		return redirect(url_for('personal'))
+	elif request.method == 'GET':
+		return render_template('info_entry.html')
 
 @app.route('/entry_issue/', methods=['GET', 'POST'])
+@login_verify
 def entryIssue():
-	try:
-		session['id']
-	except KeyError:
-		flash("请登录！")
-		return redirect(url_for('login'))
-	else:
-		if request.method == 'POST':
-			addIssue()
-			print("addIssue() called")
-			return redirect(url_for('personal'))
-		elif request.method == 'GET':
-			return render_template('issue_entry.html')
+	if request.method == 'POST':
+		addIssue()
+		print("addIssue() called")
+		return redirect(url_for('personal'))
+	elif request.method == 'GET':
+		return render_template('issue_entry.html')
 
 @app.route('/search_issue/', methods=['GET', 'POST'])
+@login_verify
 def search_issue():
-	try:
-		session['id']
-	except IndexError:
-		return render_template('search_issue.html', name="姓名", result=[("编号","标题","内容"),])
-	except KeyError:
-		flash("请登录!")
-		return redirect(url_for('login'))
-	else:
-		if request.method == 'POST':
-			# fxxk the same-name issue!!!
-			if request.form['direction'] == 'name':
-				id_listed = getConditonal('id','name',request.form['content'])
-			else:
-				id_listed = request.form['content']
-			print(id_listed)
-			result = grepIssue('id',id_listed[0][0])
-			if result == []:
-				result = [(id_listed[0][0],"无搜索结果",""),]
-			return render_template('search_issue.html', name=getConditonal('name','id',id_listed[0][0])[0][0], result=result)
-		elif request.method == 'GET':
-			return render_template('search_issue.html', name="姓名", result=[("#!","编号","标题","内容"),])
+	if request.method == 'POST':
+		return render_template('search_issue.html', result=grepIssue(request.form['direction'], request.form['content']))
+	elif request.method == 'GET':
+		return render_template('search_issue.html', result=grepIssue('id', '苟'))
 
 @app.route('/update_issue/<idx>', methods=['GET', 'POST'])
+@login_verify
 def alter(idx):
-	# alter for issue
-	try:
-		session['id']
-	except KeyError:
-		flash("请登录！")
-		return redirect(url_for('login'))
-	else:
-		if request.method == 'GET':
-			print(id)
-			return render_template('issue_update.html', database=grepIssue('idx',idx))
-		elif request.method == 'POST':
-			updateIssue(idx)
-			return redirect(url_for('personal'))
+	''' alter for issue '''
+	if request.method == 'GET':
+		print(id)
+		return render_template('issue_update.html', database=grepIssue('idx',idx))
+	elif request.method == 'POST':
+		updateIssue(idx)
+		return redirect(url_for('personal'))
 
-######## main ########
+@app.route('/score_page/')
+@login_verify
+def score():
+	if 'filename' not in session:
+		return redirect(url_for('personal'))
+	else:
+		data = xlsxSwissKnife.read(session['filename'])
+		print(data)
+		return render_template('score-entry.html', data=data)
+
+
+######## run ########
 
 if __name__ == '__main__':
-	# host = "0.0.0.0"  -->  mobile support!
 	app.run(host="0.0.0.0", debug=True)

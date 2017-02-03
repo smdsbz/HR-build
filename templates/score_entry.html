@@ -30,12 +30,13 @@
 					<div class="row">
 						<div class="col s12">
 							<ul class="tabs">
-								{% for each in data_in %}
-									<li class="tab col s3"><a href="#{{ each[0] }}">{{ each[1] }}</a></li>
+								{% for each in data %}
+								<li class="tab col s3"><a href="#{{ each[0] }}">{{ each[0] }}</a></li>
 								{% endfor %}
 							</ul>
 						</div>
-						<div class="col s12" id="first">
+						{% for each in data %}
+						<div class="col s12" id="{{ each[0] }}">
 							<div class="row">
 								<h6 class="col s12 center">自评部分</h6>
 								<div class="divider col s12"></div>
@@ -81,6 +82,7 @@
 								<h6 class="col s6 left-align">最后得分：<span id="total">59</span></h6>
 							</div>
 						</div>
+						{% endfor %}
 					</div>
 					<button class="btn col s3 waves-effect waves-light right" type="submit">提交<i class="material-icons right">send</i></button>
 				</form>
@@ -97,8 +99,8 @@
 		//$('ul.tabs').tabs();
 	});
 
-	// stupid way of instant updating count-result
 	function count() {
+		// stupid way of instant updating count-result
 		var dim_self = Number(document.getElementById("dim-self").value);
 		var act_self = Number(document.getElementById("act-self").value);
 		var act_num = Number(document.getElementById("act-num").value);
