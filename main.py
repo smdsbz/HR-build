@@ -86,7 +86,7 @@ def grepIssue(column, require):
 		else:
 			if column == 'name':
 				cursor = database.execute("select id from test where name = '%s'" % require)
-				id = cursor.fetchone()[0]
+				id = cursor.fetchone()
 			elif column == 'id':
 				id = require
 			cursor = database.execute("select * from issue where id = '%s'" % id)
